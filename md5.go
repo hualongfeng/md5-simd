@@ -3,6 +3,8 @@ package md5simd
 import (
 	"crypto/md5"
 	"hash"
+	"math/rand"
+        "runtime"
 	"sync"
 )
 
@@ -54,4 +56,19 @@ func (m *md5Wrapper) Close() {
 		md5Pool.Put(m.Hash)
 		m.Hash = nil
 	}
+}
+
+var servers = []Server{}
+var flag sync.Mutex
+func New() Hasher {
+        cpu_num := runtime.NumCPU()
+        flag.Lock()
+        if len(servers) == 0 {
+                for i := 0; i< cpu_num; i++ {
+                        servers = append(servers, NewServer())
+                }
+        }
+        flag.Unlock()
+        rand_num:=rand.Intn(cpu_num)
+        return servers[rand_num].NewHash()
 }
