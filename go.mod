@@ -1,4 +1,4 @@
-module github.com/minio/md5-simd
+module github.com/hualongfeng/md5-simd
 
 go 1.14
 
